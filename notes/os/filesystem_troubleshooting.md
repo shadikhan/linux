@@ -117,3 +117,103 @@ rsyslogd    882   935 rs:main            syslog    9w      REG                8,
 ### Accessing my files
 
 ![Filesystem Structure](../images/filesystem_structure.png)
+
+``` bash
+shad@linux:/var/log$ ls -li
+total 12172
+ 84397 lrwxrwxrwx  1 root      root                 39 Oct  1 04:13 README -> ../../usr/share/doc/systemd/README.logs
+ 34594 -rw-r--r--  1 root      root               1000 Nov  7 20:56 alternatives.log
+ 34191 -rw-r--r--  1 root      root               1662 Oct 22 21:03 alternatives.log.1
+266230 drwxr-x---  2 root      adm                4096 Nov 10 00:00 apache2
+ 34094 -rw-r-----  1 root      adm                   0 Oct 17 23:14 apport.log
+ 84398 drwxr-xr-x  2 root      root               4096 Nov 21 01:51 apt
+ ```
+
+ - Within our filesystem, we have an inode table (stores file metadata).
+ - Each entry has an inode number (first column in `ls -i` output), permissions, owner, etc. At the very end, we have pointers to data blocks (file contents).
+ - Bunch of I/O requests to these data blocks when we read these files.
+ - Deletion marks the inode entry and data blocks as free to re-use.
+
+ ### Troubleshooting inodes
+
+ - `touch testfile` results in `No space left on device` error, on `/mnt/dir`
+ - `df -h` shows that the filesystem on `/dev/sda3` mounted at `/mnt` has only 3% used.
+ - Why can't I make a file then?
+ - Two aspects of a filesystem:
+    - Data blocks (file contents): Not causing out of space error as we see from `df -h` (only 3% used).
+    - Another component which is a limited quantity: inodes.
+- Running `df -i` shows us that IUse% is at 100% for `/dev/sda3` mounted at `/mnt`.
+- If you have a file system that has a ton of tiny files, you can run out of inodes even if you have free data blocks.
+- If we remove a file, we see that the IUsed count goes down by one (every file takes up one inode). 
+- Every file only uses one inode. If you expand the number of data blocks included in the inode data, it takes data blocks from file system and converts them to additional data block pointers. Concept: Indirect file pointing. Inode points to indirect pointer (block of additional pointers) that then point to data blocks. Can go several layers deep to store large fiels.
+- Some FS are smart enough (XFS) to dynamically allocate inodes.
+- For this demo, EXT4 was chosen, because XFS wouldn't even allowed us to make a FS this small, plus it would convert data blocks to inodes dynamically.
+- Solution:
+    - Allocate more inodes ahead of time if you know if you're going to have a lot of tiny files.
+    - Could also use XFS.
+    - Make a new filesystem and migrate to it, or delete some files.
+    - If we used an extensible device, like Logical Volume Manager (LVM), we could expand the size of the filesystem, which would also give us more inodes.
+
+ ### Troubleshooting deleted files
+
+- `df -h` shows that the file system on `/dev/sda2` mounted at `/` is 99% used.
+- So we're almost out of space on this filesystem.
+- We could do a filesystem extension like we were talking about with inodes.
+- What if this is the only node that's like this?
+- Let's use `du` to figure out what's consuming this 20GB of space.
+
+``` bash
+# sort -hr : sort human readable numbers in reverse order
+shad@linux:~$ du -h / | sort -hr | head
+3.5G    /
+1.9G    /usr
+985M    /usr/lib
+762M    /home/shad
+762M    /home
+754M    /var
+682M    /home/shad/.vscode-server
+346M    /var/log
+334M    /var/log/journal/aa9e0761fad9437b96177cffcbf41daa
+334M    /var/log/journal
+```
+
+- Assume that `/var` and `/var/log` are looking a bit large (16 GB).
+- `ls -lS /var/log` to sort files by size.
+- We see a `bigfile.log` that is 16 GB.
+- We delete it with `rm /var/log/bigfile.log`.
+- But `df -h` still shows that the filesystem is 99% used. Huhhh? And `du / 2>/dev/null | head` shows that `/var/log` isn't there any more. What's going on???
+- Remember that when we delete a file, we mark the inode and data blocks as free to re-use. **But that only happens when no processes have the file open.** Note that this could mean we could restore the file if we wanted to.
+- `lsof | grep bigfile.log` to see which processes have this file open. **But also, if you forgot the name of the file, you could do `lsof | grep deleted` to see all deleted files that are still open by some process.**
+- We see that the `less` command on PID 2464 has the file open. `kill -9 2464` to kill the process. The `-9` is a SIGKILL, which forcefully kills the process.
+- Now if we do `df -h`, we see that the filesystem usage has dropped down to 19%.
+- So we werent' able to mark all of those data blocks and inode for re-use until the process that had the file open released it (by exiting).
+
+### Overmounted filesystems
+
+- `ssh user@linuxserver` to log into a remote server.
+- We get `Could not chdir to home directory /home/user: No such file or directory`.
+
+``` bash
+shad@linux:~/linux/notes/os$ grep shad /etc/passwd
+shad:x:1000:1000:Ubuntu:/home/shad:/bin/bash
+```
+
+- But, as root, when we do `ls -l /home`, we don't see a `shad` directory. Bruh who deleted my home directory???
+- We do see a `lost+found` directory in `/home`, which tells me that `/home` is a mount point for another filesystem.
+- When we run `df -h`, we see that `/dev/sda3` is mounted at `/home`. However, when we did that, there was already data in `/home`. Did we erase all the data in `/home` when we mounted `/dev/sda3` there???
+- It's not there anymore because it's obscured by the new filesystem that we mounted at `/home`. When we mount a new device on top of directory, when application go into that directory, they see the most recently mounted filesystem on that directory location.
+- If we run `umount /home`, we see that our `shad` directory is back.
+- There is a place where we could temporarily attach things in the system. `mount /dev/sda3/mnt /mnt` is a good place to mount things temporarily.
+- Assuming we want their home directory to be on `/dev/sda3`:
+    - `mount /dev/sda3 /mnt`
+    - `cp -a /home/shad /mnt` to copy the contents of our home directory to the new filesystem. Which results in `/mnt/shad`.
+    - `umount /mnt`
+    - `mount /dev/sda3 /home`
+- Now when we `ssh user@linuxserver`, we can access our home directory again, which is on `/dev/sda3`.
+- And running `mount` will show us that `/dev/sda3` is mounted at `/home`.
+- `lsblk, blkid, mount` will give you insight as to what's mounted where.
+
+### Readonly filesystems
+
+- `mount -o remount,rw /home` to remount `/home` as read-write.
+- Can't reduce XFS filesystems, but can with EXT4.

@@ -15,6 +15,7 @@
     - Press `/keyword` to search for "keyword" forward, `?keyword` to search backward.
     - Press `n` to go to the next search result, `N` to go to the previous search result.
     - Press `q` to quit.
+- By the way, if we want to not see `permission denied` errors from `du`, we can redirect stderr to /dev/null as such: `du / 2>/dev/null | head`
 
 ## things i wanna know well
 
