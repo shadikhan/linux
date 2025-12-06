@@ -1,4 +1,4 @@
-# [How Do I Use Filesystems on Linux? | Into the Terminal 112](https://www.youtube.com/watch?v=SccVI8zWpkA&t=84s)
+# [How Do I Use Filesystems on Linux? | Into the Terminal 112](https://www.youtube.com/watch?v=SccVI8zWpkA)
 
 ## Creating a filesystem
 

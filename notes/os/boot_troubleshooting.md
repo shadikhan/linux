@@ -1,4 +1,4 @@
-# Boot Troubleshooting
+# [Boot Troubleshooting](https://www.youtube.com/watch?v=hRYxmYdRN60)
 
 ## Boot Tools
 
