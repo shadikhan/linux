@@ -2,7 +2,7 @@
 
 ## todos
 
-- python: file io, argparse, main, (maybe: os stuff, threading)
+- python: file io, main, (maybe: os stuff, threading)
 - grep/awk/sed
 
 ## really nice tidbits:
@@ -17,13 +17,15 @@
     - Press `q` to quit.
 - By the way, if we want to not see `permission denied` errors from `du`, we can redirect stderr to /dev/null as such: `du / 2>/dev/null | head`
 
-## things i wanna know well
+``` bash
+shad@linux:~/linux$ journalctl --help | grep -e '-x ' -e '-u ' -e '-e '
+  -u --unit=UNIT             Show logs from the specified unit
+  -x --catalog               Add message explanations where available
+  -e --pager-end             Immediately jump to the end in the pager
+```
 
-- threads vs processes
-- fork vs exec
-- inodes
-- file system
-- boot
+## things i wanna know
+
 - setuid, setgid
 - tmux
 
