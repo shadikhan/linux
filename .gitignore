@@ -1,3 +1,5 @@
-# ignore the lab_files folder
-logs/
-src/lab[0-9][0-9][0-9]
+perf-labs/src/lab[0-9][0-9][0-9]
+perf-labs/src/lab[0-9][0-9][0-9].data
+__pycache__/
+.venv/
+notes/python/log-aggregator/**/*.log

@@ -39,3 +39,12 @@
 | sar -n DEV 1 | Network interfaces  | RX/TX packets, throughput                 |
 | sar -u 1    | CPU utilization (like mpstat) | User/system/idle breakdown              |
 | sar -d 1    | Block devices (like iostat) | Disk throughput and latency                 |
+
+## Python
+
+- We're using venv, created by `python3 -m venv .venv`
+- Activate it with `source .venv/bin/activate`
+- Install packages with `pip3 install <package-name>`
+- Install requirements with `pip3 install -r requirements.txt`
+- Add `# !/usr/bin/env python3` at the top of python scripts to make them directly executable with `./script.py`. `/usr/bin/env python3` finds the python3 interpreter in your PATH, which will be the one in your virtual environment if it's activated.
+- Deactivate the virtual environment with `deactivate`
