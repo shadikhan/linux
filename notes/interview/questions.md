@@ -1,6 +1,6 @@
 # Interview Questions
 
-[Top 10 Linux Job Interview Questions](https://www.youtube.com/watch?v=l0QGLMwR-lY)
+## [Top 10 Linux Job Interview Questions](https://www.youtube.com/watch?v=l0QGLMwR-lY)
 
 1. **How can you see which kernel version a system is currently running?**
 
@@ -188,7 +188,7 @@ UUID=B0C0-7511  /boot/efi       vfat    umask=0077      0 1
 /dev/disk/cloud/azure_resource-part1    /mnt    auto    defaults,nofail,x-systemd.after=cloud-init.service,_netdev,comment=cloudconfig  0       2
 ```
 
-[Popular Linux Interview Questions for DevOps Interviews](https://www.youtube.com/watch?v=GdrjTVDelI0&t=2s)
+## [Popular Linux Interview Questions for DevOps Interviews](https://www.youtube.com/watch?v=GdrjTVDelI0&t=2s)
 
 (basics)
 1. **How would you connect to a machine securely through a shell?**
@@ -538,6 +538,5 @@ shad@linux:~/linux$ cat /etc/*release*
 - This shows you who is logged in, uptime of the server, and load averages.
 - combo of `who` and `uptime`
 
-15. *What software do you have to install on a server?**
-
+15. **What software do you have to install on a server?**
 - htop

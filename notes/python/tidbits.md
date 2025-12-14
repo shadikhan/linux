@@ -341,3 +341,38 @@ instance = Config()
 # main.py
 from config import instance
 ```
+
+## Useful imports
+
+``` python
+from datetime import datetime, timezone
+from pathlib import Path
+
+import json 
+import random
+import time
+
+# subprocess.run(['du', '-h', logs_path], capture_output = True, text = True)
+import subprocess
+import sys
+
+from abc import ABC, abstractmethod
+from enum import Enum
+```
+
+## Walk a directory tree template
+
+``` python
+from pathlib import Path
+
+for curr_dir, dirs, files in Path(logs_path).walk():
+    # So that processing for dirs and files are lexicographically ordered
+    dirs.sort()
+    files.sort()
+
+    for file in files:
+        with open(curr_dir / file, 'r') as f:
+            # content = f.read()
+            # lines = f.readlines() or f.splitlines()
+            # for line in f: pass
+```

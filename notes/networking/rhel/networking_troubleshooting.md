@@ -82,7 +82,7 @@ shadikhan.github.io.    1178    IN      AAAA    2606:50c0:8000::153
 
 ``` bash
 # Shows you all network interfaces and their IP addresses.
-shad@linux:~/linux/notes/networking$ ip a
+shad@linux:~/linux/notes/networking$ ip addr
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -228,7 +228,7 @@ shad@linux:~/linux/notes/images$
 - Check if ip addresses are configured
 
 ``` bash
-shad@linux:~/linux/notes/images$ ip a
+shad@linux:~/linux/notes/images$ ip addr
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo

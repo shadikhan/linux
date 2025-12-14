@@ -24,6 +24,9 @@ shad@linux:~/linux$ journalctl --help | grep -e '-x ' -e '-u ' -e '-e '
   -e --pager-end             Immediately jump to the end in the pager
 ```
 
+- `command &> filename` redirects both stdout and stderr to `filename`. Musch simpler than `command > filename 2>&1`
+- `wc -l < filename` is more efficient than `cat filename | wc -l` because it avoids the unnecessary use of `cat` and a pipe.
+
 ## things i wanna know
 
 - setuid, setgid
