@@ -5,8 +5,6 @@
 - Walk through a file tree
 - For each file, log the | filename | file size | line number | line that contains [Error]
 
-
-
 Structure:
 
 logs/
@@ -19,10 +17,15 @@ errors.log
 (Automate below):
     - Remove top level logs: rm *.log
     - Remove logs: rm -r  logs/*
+    - Clear out processed files if you would like.
 
-Usage: ./log-aggregator.py ./logs/
+rm -f *.log && rm -r logs/* && rm -f ./processed_files.json
 
-
+Usage:
+source ./.venv/bin/activate
+chmod 700 log-aggregator.py
+./log-aggregator.py ./logs/ 
+./log-aggregator.py 
 '''
 from datetime import datetime, timezone
 from pathlib import Path
@@ -49,21 +52,26 @@ def record_stats(logs_path):
 
 def parse_logs(logs_path: str, processed_files: list[str]) -> None:
     with open('errors.log', 'a') as f:
-        for path in Path(logs_path).rglob("*"):
-            if path.is_file() and ".log" in path.name:
-                log_file = path.name
+        for curr_dir, dirs, files in Path(logs_path).walk():
 
-                with open(path.absolute(), 'r') as flog:
+            # important, will ensure 
+            dirs.sort()
+            files.sort()
 
-                    if log_file in processed_files:
-                        continue
-                    
-                    processed_files.append(log_file)
+            for file in files:
+                if ".log" in file:
+                    log_file = file
 
-                    for entry in flog:
-                        if 'ERROR' in entry:
-                            f.write(f'{log_file}: {entry}')
+                    with open(curr_dir / file, 'r') as flog:
 
+                        if log_file in processed_files:
+                            continue
+                        
+                        processed_files.append(log_file)
+
+                        for entry in flog:
+                            if 'ERROR' in entry:
+                                f.write(f'{log_file}: {entry}')
 
 def write_logs(logs_path: str) -> None:
     now = datetime.now(timezone.utc).isoformat()
@@ -76,10 +84,7 @@ def write_logs(logs_path: str) -> None:
     entries = MESSAGES[:]
     random.shuffle(entries)
 
-    log_file = f'{minute_dir.absolute()}/{now_second}.log'
-    print(log_file)
-
-    with open(log_file, 'a') as f:
+    with open(minute_dir / f'{now_second}.log', 'a') as f:
         for entry in entries:
             f.write(f'{now} {entry}\n')
 
@@ -101,11 +106,9 @@ def main(logs_path : str) -> None:
         parse_logs(logs_path, processed_files)
 
         with open('processed_files.json', 'w') as f:
-            print(processed_files)
+            print(f'Processed {len(processed_files)} so far')
             json.dump(processed_files, f)
 
 if __name__ == "__main__":
-    logs_path = Path(sys.argv[1]).absolute()
+    logs_path = Path("./logs" if len(sys.argv) == 1 else sys.argv[1]).absolute()
     main(logs_path)
-
-
