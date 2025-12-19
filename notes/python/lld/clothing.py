@@ -53,7 +53,7 @@ class Clothing:
         return (self.color, self.size, self.country) == (other.color, other.size, other.country)
     
     def __hash__(self) -> int:
-        return hash((self.color, self.size, self.country) )
+        return hash((self.color, self.size, self.country))
     
     @classmethod
     def from_dict(cls, d: dict) -> 'Clothing':

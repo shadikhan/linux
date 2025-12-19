@@ -1,0 +1,1 @@
+LLD notes are in Notion: https://www.notion.so/Low-Level-Design-2cdf24d8c66e80fdae80e6f54be95e54?source=copy_link
