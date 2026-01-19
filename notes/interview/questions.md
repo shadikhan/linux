@@ -34,7 +34,7 @@ shad@linux:~/linux/notes/interview$ ip addr show
        valid_lft forever preferred_lft forever
 
 shad@linux:~/linux/notes/interview$ curl ifconfig.me
-20.121.121.163
+<redacted-vm-ip>
 ```
 
 3. **How to check for free disk space in Linux?**
@@ -193,12 +193,12 @@ UUID=B0C0-7511  /boot/efi       vfat    umask=0077      0 1
 (basics)
 1. **How would you connect to a machine securely through a shell?**
 
-`ssh -i C:\Users\shad\.ssh\shad_key.pem shad@20.121.121.163`
+`ssh -i C:\Users\shad\.ssh\shad_key.pem shad@<redacted-vm-ip>`
 
 2. **How would you copy files from a remote server to your local machine securely?**
 
 ``` bash
-PS C:\Users\shad\Downloads> scp -i C:\Users\shad\.ssh\shad_key.pem shad@20.121.121.163:/home/shad/linux/README.md C:\Users\shad\Downloads
+PS C:\Users\shad\Downloads> scp -i C:\Users\shad\.ssh\shad_key.pem shad@<redacted-vm-ip>:/home/shad/linux/README.md C:\Users\shad\Downloads
 README.md                                                                                                                               100%  313     6.2KB/s   00:00
 ```
 

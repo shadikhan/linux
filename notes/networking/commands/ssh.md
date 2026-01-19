@@ -24,8 +24,8 @@ Nov 21 02:25:33 linux sshd[4408]: pam_unix(sshd:session): session closed for use
 
 ``` bash
 $ cat ~/.ssh/config
-Host linux 20.121.121.163
-  HostName 20.121.121.163
+Host linux <redacted-vm-ip>
+  HostName <redacted-vm-ip>
   User shad
   IdentityFile C:/Users/shad/.ssh/shad_key.pem
 
@@ -69,8 +69,8 @@ grep: /etc/ssh/sshd_config.d/50-cloud-init.conf: Permission denied
 - Let's first check the network layer, which in itself is unrelated to OpenSSH.
 
 ``` bash
-shad@linux:~/linux/notes/networking$ nc -vz 20.121.121.163 22
-Connection to 20.121.121.163 22 port [tcp/ssh] succeeded!
+shad@linux:~/linux/notes/networking$ nc -vz <redacted-vm-ip> 22
+Connection to <redacted-vm-ip> 22 port [tcp/ssh] succeeded!
 ```
 
 - 22 needs to be allowed through any firewalls en route to the server.
